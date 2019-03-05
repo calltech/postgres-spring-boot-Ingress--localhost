@@ -37,4 +37,4 @@ spec:
                   name: postgres-config
                   key: POSTGRES_DB
           ports:
-            - containerPort: 8080
+            - containerPort: 80

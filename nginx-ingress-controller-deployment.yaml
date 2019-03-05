@@ -14,7 +14,7 @@ spec:
       serviceAccount: nginx
       containers:
         - name: nginx-ingress-controller
-          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.9.0
+          image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
           imagePullPolicy: Always
           readinessProbe:
             httpGet:
@@ -30,9 +30,9 @@ spec:
             timeoutSeconds: 5
           args:
             - /nginx-ingress-controller
-            - --default-backend-service=\$(POD_NAMESPACE)/default-backend
+            #- --default-backend-service=\$(POD_NAMESPACE)/default-backend
             - --configmap=\$(POD_NAMESPACE)/nginx-ingress-controller-conf
-            - --v=2
+            #- --v=2
           env:
             - name: POD_NAME
               valueFrom:
