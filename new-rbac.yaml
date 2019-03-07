@@ -1,11 +1,17 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx
+  namespace: ingress
+---
+apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nginx
   namespace: ingress
 ---
-kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
 metadata:
   name: nginx-role
   namespace: ingress
@@ -24,20 +30,13 @@ rules:
   - apiGroups:
       - ""
     resources:
-      - nodes
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resources:
       - services
     verbs:
       - get
       - list
-      - update
       - watch
   - apiGroups:
-      - extensions
+      - "extensions"
     resources:
       - ingresses
     verbs:
@@ -52,14 +51,51 @@ rules:
       - create
       - patch
   - apiGroups:
-      - extensions
+      - "extensions"
     resources:
       - ingresses/status
     verbs:
       - update
 ---
-kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: nginx-ingress-role
+  namespace: ingress
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - endpoints
+    verbs:
+      - get
+      - create
+      - update
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: nginx-role
+  namespace: ingress
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: nginx
+subjects:
+  - kind: ServiceAccount
+    name: nginx
+    namespace: ingress
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
 metadata:
   name: nginx-role
   namespace: ingress
